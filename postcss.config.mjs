@@ -1,8 +1,9 @@
 // PostCSS configuration for Tailwind CSS v4 with Next.js
-// @tailwindcss/postcss handles autoprefixing automatically
+//** @type {import('postcss-load-config').Config} */
 const config = {
   plugins: {
-    '@tailwindcss/postcss': {},
+    tailwindcss: {},
+    autoprefixer: {},
   },
 };
 

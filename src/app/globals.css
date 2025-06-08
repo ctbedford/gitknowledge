@@ -2,7 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Gwern-inspired typography and design system */
+/* Gwern-inspired typography and design system.
+  Ref: GwernKnowledge Vision - "Gwern-inspired dark theme", "minimalist aesthetic"
+*/
 @layer base {
   :root {
     --color-bg: 250 250 250;
@@ -12,21 +14,15 @@
     --font-serif: 'Georgia', 'Times New Roman', serif;
   }
   
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --color-bg: 20 20 20;
-      --color-text: 230 230 230;
-      --color-link: 96 165 250;
-      --color-muted: 156 163 175;
-    }
-    
-    body {
-      @apply bg-gray-900 text-gray-100;
-    }
+  .dark {
+    --color-bg: 20 20 20;
+    --color-text: 230 230 230;
+    --color-link: 96 165 250;
+    --color-muted: 156 163 175;
   }
   
   body {
-    @apply antialiased;
+    @apply bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 antialiased;
     font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
   }
   
@@ -38,133 +34,105 @@
   }
 }
 
-/* Enhanced prose styling */
-.prose {
-  @apply max-w-none;
-  font-family: var(--font-serif);
-}
-
-.prose p {
-  @apply leading-relaxed;
-}
-
-.prose a {
-  @apply text-blue-600 no-underline hover:underline;
-  @apply dark:text-blue-400;
-}
-
-.prose pre {
-  @apply bg-gray-100 dark:bg-gray-800 rounded-lg p-4 overflow-x-auto;
-  @apply border border-gray-200 dark:border-gray-700;
-  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
-}
-
-.prose code {
-  @apply bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-sm;
-  @apply border border-gray-200 dark:border-gray-700;
-  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
-}
-
-.prose blockquote {
-  @apply border-l-4 border-gray-300 dark:border-gray-600 pl-4 italic;
-}
-
-/* Wiki-style links */
-.prose a[href^="/"]:not([href^="http"])::before {
-  content: "→ ";
-  @apply text-gray-400 dark:text-gray-600;
-}
-
-/* Backlink styling */
-.backlink {
-  @apply text-sm text-gray-600 hover:text-gray-800;
-  @apply dark:text-gray-400 dark:hover:text-gray-200;
-}
-
-.backlink::before {
-  content: "← ";
-}
-
-/* Stage indicators */
-.stage-seed { @apply text-green-500; }
-.stage-sapling { @apply text-green-600; }
-.stage-tree { @apply text-green-700; }
-.stage-forest { @apply text-green-800 dark:text-green-700; }
-
-/* Certainty meter */
-.certainty-meter {
-  @apply inline-flex items-center gap-2;
-}
-
-.certainty-meter .bar {
-  @apply w-20 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden;
-}
-
-.certainty-meter .fill {
-  @apply h-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500;
-}
-
-/* Search highlights */
-mark {
-  @apply bg-yellow-200 dark:bg-yellow-900 text-gray-900 dark:text-gray-100 px-0.5 rounded;
-}
-
-/* Graph visualization */
-.knowledge-graph {
-  @apply w-full h-full;
-}
-
-.knowledge-graph .node {
-  @apply cursor-pointer;
-}
-
-.knowledge-graph .node:hover circle {
-  @apply opacity-90;
-  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.3));
-}
-
-/* Collapsible sections */
-details {
-  @apply my-4;
-}
-
-details summary {
-  @apply cursor-pointer text-lg font-semibold mb-2 hover:text-blue-600 dark:hover:text-blue-400;
-  @apply select-none;
-}
-
-details summary::-webkit-details-marker {
-  @apply text-gray-400;
-}
-
-details[open] summary {
-  @apply mb-4;
-}
-
-/* Version diff styling */
-.diff-added {
-  @apply bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200;
-}
-
-.diff-removed {
-  @apply bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200;
-}
-
-/* Loading states */
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
+/* Enhanced prose styling for readability.
+  Ref: GwernKnowledge Vision
+*/
+@layer components {
+  .prose {
+    @apply max-w-none text-gray-700 dark:text-gray-300;
+    font-family: var(--font-serif);
   }
-  50% {
-    opacity: .5;
+
+  .prose p {
+    @apply leading-relaxed;
+  }
+
+  .prose a {
+    @apply text-blue-600 dark:text-blue-400 no-underline hover:underline;
+  }
+
+  .prose pre {
+    @apply bg-gray-100 dark:bg-gray-800 rounded-lg p-4 overflow-x-auto;
+    @apply border border-gray-200 dark:border-gray-700;
+    font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+  }
+
+  .prose code {
+    @apply bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-sm;
+    @apply border border-gray-200 dark:border-gray-700;
+    font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+  }
+
+  .prose blockquote {
+    @apply border-l-4 border-gray-300 dark:border-gray-600 pl-4 italic text-gray-600 dark:text-gray-400;
+  }
+
+  /* Backlink styling for interconnected thought.
+    Ref: GwernKnowledge Architecture - "Backlinks → (Bidirectional)" 
+  */
+  .backlink {
+    @apply text-sm text-gray-600 hover:text-gray-800;
+    @apply dark:text-gray-400 dark:hover:text-gray-200;
+  }
+
+  .backlink::before {
+    content: "← ";
+  }
+
+  /* Stage indicators for idea evolution.
+    Ref: GwernKnowledge Node Structure - "stage: [seed|sapling|tree|forest]" 
+  */
+  .stage-seed { @apply text-green-500; }
+  .stage-sapling { @apply text-green-600; }
+  .stage-tree { @apply text-green-700; }
+  .stage-forest { @apply text-green-800 dark:text-green-700; }
+
+  /* Certainty meter for epistemic status.
+    Ref: GwernKnowledge Node Structure - "certainty: [speculation|likely|confident|verified]" 
+  */
+  .certainty-meter .bar {
+    @apply w-20 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden;
+  }
+
+  .certainty-meter .fill {
+    @apply h-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500;
+  }
+  
+  /* Highlighting for search results.
+    Ref: GwernKnowledge Intelligence - "AI-generated TLDRs" and search features
+  */
+  mark {
+    @apply bg-yellow-200 dark:bg-yellow-900 text-gray-900 dark:text-gray-100 px-0.5 rounded;
+  }
+
+  /* Collapsible sections for managing complexity.
+    Ref: GwernKnowledge UI Features - "Collapsible sections"
+  */
+  details > summary {
+    @apply list-none;
+  }
+  details > summary::-webkit-details-marker {
+    @apply hidden;
+  }
+  details > summary {
+    @apply cursor-pointer select-none;
+  }
+
+  /* Version diff styling for evolution tracking.
+    Ref: GwernKnowledge UI Features - "Version diffing"
+  */
+  .diff-added {
+    @apply bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200;
+  }
+
+  .diff-removed {
+    @apply bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200;
   }
 }
 
-.loading {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-/* Scrollbar styling */
+/* Utility layers for refined UX.
+  Ref: GwernKnowledge UI Features
+*/
 @layer utilities {
   .scrollbar-thin::-webkit-scrollbar {
     width: 8px;
@@ -182,37 +150,16 @@ details[open] summary {
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     @apply bg-gray-500 dark:bg-gray-500;
   }
-}
 
-/* Line clamp utility */
-@layer utilities {
-  .line-clamp-2 {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-  }
-  
-  .line-clamp-3 {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-  }
-}
-
-/* Focus styles */
-@layer base {
-  *:focus {
-    @apply outline-none;
-  }
-  
+  /* Focus styles for accessibility */
   *:focus-visible {
-    @apply ring-2 ring-blue-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-900;
+    @apply outline-none ring-2 ring-blue-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-900;
   }
 }
 
-/* Print styles */
+/* Print styles for physical copies.
+  Ref: GwernKnowledge - Implied need for content portability.
+*/
 @media print {
   .no-print {
     display: none !important;

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { getRecentNodes } from '@/lib/content-manager'
+import TimeAgo from '@/components/TimeAgo'
 import { formatDistanceToNow } from 'date-fns'
 
 function getStageEmoji(stage: string) {
@@ -80,9 +81,7 @@ export default async function HomePage() {
                     {Math.round(node.metadata.certainty * 100)}% certain
                   </span>
                   <span>•</span>
-                  <time dateTime={node.metadata.modified}>
-                    {formatDistanceToNow(new Date(node.metadata.modified))} ago
-                  </time>
+                  <TimeAgo dateString={node.metadata.modified} />
                 </div>
               </div>
               
