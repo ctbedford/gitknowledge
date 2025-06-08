@@ -1,6 +1,9 @@
-module.exports = {
+// PostCSS configuration for Tailwind CSS v4 with Next.js
+// @tailwindcss/postcss handles autoprefixing automatically
+const config = {
   plugins: {
-    'tailwindcss': {},
-    'autoprefixer': {},
+    '@tailwindcss/postcss': {},
   },
-}
+};
+
+export default config;

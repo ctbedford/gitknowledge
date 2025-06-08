@@ -21,8 +21,7 @@ const nextConfig = {
   trailingSlash: false,
   // Enable React strict mode for better development experience
   reactStrictMode: true,
-  // Optimize for production
-  swcMinify: true,
+  
   // Headers for better security
   async headers() {
     return [
