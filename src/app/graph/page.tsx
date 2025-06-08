@@ -27,7 +27,7 @@ export default async function GraphPage() {
   // Filter out private nodes and nulls
   const publicNodes = nodes.filter(
     (node): node is NonNullable<typeof node> => 
-      node !== null && node.visibility !== 'private'
+      node !== null && node.visibility !== 'public'
   )
   
   // Build links from backlink map
@@ -37,7 +37,7 @@ export default async function GraphPage() {
   
   // Create links from backlink data
   Object.entries(backlinkMap).forEach(([target, sources]) => {
-    sources.forEach(source => {
+    (sources as string[]).forEach((source: string) => {
       // Only include links between public nodes
       const sourceNode = publicNodes.find(n => n.id === source)
       const targetNode = publicNodes.find(n => n.id === target)

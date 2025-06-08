@@ -79,23 +79,45 @@ export async function getNodeHistory(slug: string, limit: number = 10): Promise<
   try {
     const filePath = `${slug}.md`
     
-    // Get log for specific file
+    // Get log for all commits first
     const commits = await git.log({
       fs,
       dir: CONTENT_PATH,
       ref: 'HEAD',
-      filepaths: [filePath],
-      depth: limit
+      depth: limit * 10 // Get more commits to filter through
     })
     
-    return commits.map(commit => ({
-      sha: commit.oid,
-      message: commit.commit.message,
-      author: commit.commit.author.name,
-      email: commit.commit.author.email,
-      timestamp: commit.commit.author.timestamp,
-      date: new Date(commit.commit.author.timestamp * 1000)
-    }))
+    // Filter commits that touched this file
+    const fileCommits: NodeHistory[] = []
+    
+    for (const commit of commits) {
+      try {
+        // Check if this commit modified our file
+        const files = await git.listFiles({
+          fs,
+          dir: CONTENT_PATH,
+          ref: commit.oid
+        })
+        
+        if (files.includes(filePath)) {
+          fileCommits.push({
+            sha: commit.oid,
+            message: commit.commit.message,
+            author: commit.commit.author.name,
+            email: commit.commit.author.email,
+            timestamp: commit.commit.author.timestamp,
+            date: new Date(commit.commit.author.timestamp * 1000)
+          })
+          
+          if (fileCommits.length >= limit) break
+        }
+      } catch (error) {
+        // Skip commits where file doesn't exist
+        continue
+      }
+    }
+    
+    return fileCommits
   } catch (error) {
     console.error('Git log error:', error)
     return []
@@ -254,8 +276,6 @@ export interface GitStatus {
 
 export async function getStatus(): Promise<GitStatus> {
   try {
-    const FILE = 0, HEAD = 1, WORKDIR = 2
-    
     const filenames = await fs.promises.readdir(CONTENT_PATH)
     const status: GitStatus = {
       modified: [],
@@ -274,14 +294,26 @@ export async function getStatus(): Promise<GitStatus> {
         filepath
       })
       
-      if (fileStatus === 'untracked') {
-        status.untracked.push(filepath)
-      } else if (fileStatus === 'added') {
-        status.added.push(filepath)
+      // Handle the actual status values from isomorphic-git
+      // See: https://isomorphic-git.org/docs/en/status
+      if (fileStatus === 'unmodified') {
+        // File is tracked and unchanged
+        continue
       } else if (fileStatus === 'modified') {
         status.modified.push(filepath)
-      } else if (fileStatus === 'deleted') {
+      } else if (fileStatus === '*modified') {
+        // Modified in index
+        status.modified.push(filepath)
+      } else if (fileStatus === '*added') {
+        status.added.push(filepath)
+      } else if (fileStatus === 'absent' || fileStatus === '*absent') {
+        // File was deleted
         status.deleted.push(filepath)
+      } else if (fileStatus === 'deleted' || fileStatus === '*deleted') {
+        status.deleted.push(filepath)
+      } else if (!fileStatus) {
+        // File is untracked (status returns undefined for untracked files)
+        status.untracked.push(filepath)
       }
     }
     
