@@ -3,17 +3,16 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import ThemeToggle from '@/components/ThemeToggle'
 import { Lora, Inter } from 'next/font/google'
+import { cn } from '@/lib/utils'
 
-// Font setup
-const lora = Lora({
+const fontSans = Inter({
   subsets: ['latin'],
-  variable: '--font-lora',
-  display: 'swap',
+  variable: '--font-sans',
 })
-const inter = Inter({
+
+const fontSerif = Lora({
   subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
+  variable: '--font-serif',
 })
 
 export const metadata: Metadata = {
@@ -27,63 +26,40 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${lora.variable} ${inter.variable}`} suppressHydrationWarning>
-      <body className="bg-bg-default text-text-default">
-        <div className="flex flex-col min-h-screen">
-          <header className="sticky top-0 z-40 w-full border-b bg-bg-default/80 backdrop-blur-sm">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="flex items-center justify-between h-16">
-                <div className="flex items-center">
-                  <Link href="/" className="font-sans text-xl font-bold">
-                    🏛️ The Cathedral
-                  </Link>
-                </div>
-                <div className="flex items-center gap-4">
-                  <nav className="hidden md:flex items-center gap-6 text-sm font-medium font-sans">
-                    <Link href="/graph" className="text-text-muted hover:text-primary transition-colors">Graph</Link>
-                    <Link href="/search" className="text-text-muted hover:text-primary transition-colors">Search</Link>
-                  </nav>
-                  <div className="w-px h-6 bg-border-default hidden md:block"></div>
-                  <ThemeToggle />
-                  <Link 
-                    href="/new" 
-                    className="font-sans px-3 py-1.5 bg-primary text-white rounded-md hover:opacity-90 transition-opacity text-sm font-medium"
-                  >
-                    New Entry
-                  </Link>
-                </div>
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={cn(
+          "min-h-screen bg-background font-serif antialiased",
+          fontSans.variable,
+          fontSerif.variable
+        )}
+      >
+        <div className="flex min-h-screen flex-col">
+          <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <div className="container flex h-14 max-w-screen-2xl items-center">
+              <nav className="flex items-center space-x-6 text-sm font-medium">
+                <Link href="/" className="mr-6 flex items-center space-x-2">
+                  <span className="font-bold sm:inline-block font-sans text-lg">
+                    🏛️ Knowledge Cathedral
+                  </span>
+                </Link>
+                <Link href="/graph" className="transition-colors hover:text-foreground/80 text-foreground/60 font-sans">Graph</Link>
+                <Link href="/search" className="transition-colors hover:text-foreground/80 text-foreground/60 font-sans">Search</Link>
+              </nav>
+              <div className="flex flex-1 items-center justify-end space-x-4">
+                <ThemeToggle />
               </div>
             </div>
           </header>
-
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-grow w-full">
-            <div className="lg:grid lg:grid-cols-12 lg:gap-8">
-              {/* Main Content Area */}
-              <main className="lg:col-span-9 py-8">
-                <article className="prose dark:prose-invert max-w-none prose-lg">
-                  {children}
-                </article>
-              </main>
-
-              {/* Sidebar Area (for future use) */}
-              <aside className="hidden lg:block lg:col-span-3 py-8">
-                <div className="sticky top-20 space-y-6">
-                  {/* Placeholder for Table of Contents, Related Links etc. */}
-                  <div className="p-4 bg-bg-subtle rounded-lg">
-                    <h3 className="font-sans font-semibold text-text-default">Context</h3>
-                    <p className="font-serif text-sm text-text-muted mt-2">
-                      This sidebar will hold navigation, a table of contents, and related notes in a future phase.
-                    </p>
-                  </div>
-                </div>
-              </aside>
-            </div>
-          </div>
-          
-          <footer className="w-full mt-16 py-8 border-t">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-text-muted text-sm font-sans">
-              <p>A Knowledge Cathedral. Built with STORYMORPH-C.</p>
-            </div>
+          <main className="flex-1 container max-w-screen-2xl py-8">
+            {children}
+          </main>
+          <footer className="py-6 md:px-8 md:py-0 border-t">
+              <div className="container flex flex-col items-center justify-center gap-4 md:h-24 md:flex-row">
+                  <p className="text-balance text-center text-sm leading-loose text-muted-foreground md:text-left font-sans">
+                      Built by <a href="#" className="font-medium underline underline-offset-4">Storymorph-C</a>. The source code is available on GitHub.
+                  </p>
+              </div>
           </footer>
         </div>
       </body>
