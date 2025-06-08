@@ -11,6 +11,52 @@ const nextConfig = {
   experimental: {
     mdxRs: true,
   },
+  images: {
+    // Add any external image domains you want to support
+    domains: [],
+    // Support for image optimization
+    formats: ['image/avif', 'image/webp'],
+  },
+  // Ensure trailing slashes are handled consistently
+  trailingSlash: false,
+  // Enable React strict mode for better development experience
+  reactStrictMode: true,
+  // Optimize for production
+  swcMinify: true,
+  // Headers for better security
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'SAMEORIGIN',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
+        ],
+      },
+    ]
+  },
+  // Redirects for common patterns
+  async redirects() {
+    return [
+      // Redirect /index to home
+      {
+        source: '/index',
+        destination: '/',
+        permanent: true,
+      },
+      // Add any other redirects you need
+    ]
+  },
 }
 
 const withMDX = createMDX({
@@ -18,14 +64,25 @@ const withMDX = createMDX({
     remarkPlugins: [
       remarkGfm,
       [remarkWikiLink, {
-        pageResolver: (name) => [name.toLowerCase().replace(/ /g, '-')],
-        hrefTemplate: (permalink) => `/${permalink}`
+        pageResolver: (name) => {
+          // Handle different wiki link formats
+          return [name.toLowerCase().replace(/\s+/g, '-')]
+        },
+        hrefTemplate: (permalink) => {
+          // Ensure proper URL formatting
+          return `/${permalink}`
+        }
       }]
     ],
     rehypePlugins: [
       rehypeHighlight,
       rehypeSlug,
-      [rehypeAutolinkHeadings, { behavior: 'wrap' }]
+      [rehypeAutolinkHeadings, { 
+        behavior: 'wrap',
+        properties: {
+          className: ['anchor']
+        }
+      }]
     ],
   },
 })
