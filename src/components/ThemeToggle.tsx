@@ -3,37 +3,38 @@
 import { useState, useEffect } from 'react'
 
 export default function ThemeToggle() {
-  const [darkMode, setDarkMode] = useState(false)
+  const [theme, setTheme] = useState('system')
 
   useEffect(() => {
-    const isDark = localStorage.getItem('theme') === 'dark' || 
-                   (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
-    setDarkMode(isDark)
-    if (isDark) {
-      document.documentElement.classList.add('dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-    }
+    const storedTheme = localStorage.getItem('theme') || 'system'
+    setTheme(storedTheme)
   }, [])
 
-  const toggleTheme = () => {
-    const newDarkMode = !darkMode
-    setDarkMode(newDarkMode)
-    localStorage.setItem('theme', newDarkMode ? 'dark' : 'light')
-    if (newDarkMode) {
+  useEffect(() => {
+    if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
       document.documentElement.classList.add('dark')
     } else {
       document.documentElement.classList.remove('dark')
     }
+    localStorage.setItem('theme', theme)
+  }, [theme])
+
+  const cycleTheme = () => {
+    const themes = ['light', 'dark', 'system']
+    const currentIndex = themes.indexOf(theme)
+    const nextTheme = themes[(currentIndex + 1) % themes.length]
+    setTheme(nextTheme)
   }
 
   return (
     <button
-      onClick={toggleTheme}
-      className="p-2 rounded-md bg-bg-subtle-light dark:bg-bg-subtle-dark text-text-default-light dark:text-text-default-dark hover:bg-opacity-80 transition-colors fixed bottom-4 right-4 z-50 border border-border-default-light dark:border-border-default-dark"
-      aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+      onClick={cycleTheme}
+      className="p-2 rounded-md text-text-muted dark:text-dark-text-muted hover:bg-bg-subtle dark:hover:bg-dark-bg-subtle transition-colors"
+      aria-label="Toggle theme"
     >
-      {darkMode ? '☀️ Light' : '🌙 Dark'}
+      {theme === 'light' && '☀️'}
+      {theme === 'dark' && '🌙'}
+      {theme === 'system' && '🖥️'}
     </button>
   )
 }
